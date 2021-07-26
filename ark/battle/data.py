@@ -43,7 +43,7 @@ Pivot_img = ['battle/san.png',
 
 def get_sanity() -> Tuple[int, int, int]:
     san_img = intf.screen(box=Sanity_box)
-    san_str = recognize(san_img)
+    san_str = recognize(san_img, repl={'g': '9'})
     san_cost_img = intf.screen(box=Sanity_cost_box)
     san_cost_str = recognize(san_cost_img)
     if '/' not in san_str or not san_cost_str.startswith('-'):
