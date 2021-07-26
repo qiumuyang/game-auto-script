@@ -51,6 +51,8 @@ def start_game() -> None:
         elif status == Status.Login:
             intf.img_tap(ACCOUNT_LOGIN)
             _login()
+        elif status == Status.Daily_award:
+            intf.tap(GET_AWARD_BOX)
         elif status == Status.Success:
             break
 
