@@ -58,3 +58,12 @@ def handle_single_battle() -> bool:
         return True
 
     return False
+
+
+def execute_single_level():
+    cnt = 0
+    while 1:
+        cnt += 1
+        logger.info(f'第{cnt}次战斗')
+        if not handle_single_battle():
+            break
