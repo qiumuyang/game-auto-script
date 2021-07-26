@@ -24,11 +24,6 @@ def adb_execute(cmd: str, device: str = '', stdout=None) -> Optional[subprocess.
     return proc
 
 
-# on init
-adb_execute('kill-server')
-adb_execute('start-server')
-
-
 class Key(IntEnum):
     HOME = 3
     BACK = 4
@@ -48,11 +43,18 @@ class AdbInterface:
     @staticmethod
     def get_devices() -> List[str]:
         devices = []
-        proc = adb_execute('devices', stdout=subprocess.PIPE)
-        try:
-            stdout, stderr = proc.communicate(timeout=1)
-        except subprocess.TimeoutExpired:
-            return []
+
+        retry = 3
+        while retry:
+            proc = adb_execute('devices', stdout=subprocess.PIPE)
+            try:
+                stdout, stderr = proc.communicate(timeout=2)
+            except subprocess.TimeoutExpired:
+                retry -= 1
+                continue
+            else:
+                break
+
         data = str(stdout, encoding='ascii')
         for line in data.splitlines():
             match = re.fullmatch(r'(.+?)[\t ](?:device)', line.strip())
