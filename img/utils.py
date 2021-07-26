@@ -36,13 +36,13 @@ def img_mark(img: Image.Image, boxes: Union[Box, List[Box]], color: Tuple[int, i
     return img
 
 
-def binarization(img: Image.Image, thresh: int = 127):
+def binarization(img: Image.Image, thresh: int = 127) -> Image.Image:
     img_gray = pil_to_cvgray(img)
     val, img = cv2.threshold(img_gray, thresh, 255, cv2.THRESH_BINARY)
     return cv_to_pil(img)
 
 
-def img_cmp(src: Image.Image, dst: Image.Image):
+def img_cmp(src: Image.Image, dst: Image.Image) -> float:
     def phash(img: Image.Image) -> int:
         img = img.resize((8, 8), Image.ANTIALIAS).convert('L')
         avg = reduce(lambda x, y: x + y, img.getdata()) / 64.

@@ -37,6 +37,11 @@ class Interface:
         img = self.adb.screencap(cached)
         return img.crop(box.xyxy) if box else img
 
+    def img_crop(self, img: IMG_T, box: Box) -> Image.Image:
+        if isinstance(img, str):
+            img = self.load_image(img)
+        return img.crop(box.xyxy)
+
     def img_match(self, pattern: IMG_T, img: IMG_T = None, thresh: float = 0.8) -> List[Box]:
         if img == None:
             img = self.screen()
