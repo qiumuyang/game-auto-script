@@ -47,7 +47,10 @@ def handle_single_battle() -> bool:
         logger.info('设置关卡二倍速')
 
     logger.info('等待关卡结束')
-    intf.wait_img(END_BATTLE)
+    end = intf.wait_img(END_BATTLE)
+    if end == END_SPECIAL:
+        intf.tap(Box((1124, 9), (1268, 56)))
+
     # TODO: prts failure detect
     #       level up detect
     logger.info('关卡结束')
