@@ -33,13 +33,14 @@ class Status(IntEnum):
 
 
 Status_pivot = {Status.Not_start: GAME_ICON,
-                Status.Start: START,
+                Status.Start: [START, 'start/清除缓存.png'],
                 Status.Wake: [WAKEN, ACCOUNT_MANAGE],
                 Status.Login: ACCOUNT_LOGIN,
                 Status.Wake_fail: 'start/请重新输入登录信息.png',
                 Status.Daily_award: '获得物资.png',
                 Status.Success: ['系统公告.png', '活动公告.png',
-                                 'main/公告.png', 'main/好友.png']
+                                 'main/公告.png', 'main/好友.png',
+                                 'battle/开始行动-1.png']
                 }
 
 
