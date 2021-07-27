@@ -53,8 +53,18 @@ def _purchase_item(i: int):
 
 def execute_purchase() -> None:
     # TODO: add move-to-shop
-    while get_shop_status() == Status.Other_shop:
-        intf.tap(SHOP_BOX_DICT['信用交易所'])
+    while 1:
+        status = get_shop_status()
+        if status == Status.Credit_shop:
+            if not intf.img_tap(GET_CREDIT, 1):
+                break
+        elif status == Status.Other_shop:
+            intf.tap(SHOP_BOX_DICT['信用交易所'])
+        elif status == Status.Unknown:
+            intf.keyevent(Key.BACK)
+        elif status == Status.Get:
+            intf.tap(GET_AWARD_BOX)
+        time.sleep(1.5)
 
     assert(get_shop_status() == Status.Credit_shop)
 
@@ -75,6 +85,7 @@ def execute_purchase() -> None:
                 _purchase_item(i)
                 logger.info(f'购买[{item.name}]')
                 assert(get_shop_status() == Status.Credit_shop)
-                assert(credit - item.cost == reco_credit())
-                credit -= item.cost
+                # assert(credit - item.cost == reco_credit())
+                # credit -= item.cost
+                credit = reco_credit()
                 logger.info(f'当前信用 {credit}')

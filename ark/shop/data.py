@@ -21,8 +21,11 @@ SHOP_ITEM_NAME_BOX = Box.from_size((9, 2), (217, 30))
 SHOP_ITEM_DISCNT_BOX = Box.from_size((3, 36), (60, 33))
 SHOP_ITEM_CNT_BOX = Box.from_size((103, 150), (56, 23))
 SHOP_ITEM_COST_BOX = Box.from_size((10, 197), (217, 30))
+GET_CREDIT = 'shop/收取信用.png'
 GET_CREDIT_BOX = Box((971, 28), (1068, 50))
 CREDIT_RECO_BOX = Box((1155, 26), (1200, 50))
+CREDIT_RECO_BOX_2 = [Box.from_size((1158 + i * 14, 26), (14, 24))
+                     for i in range(3)]
 EXCEPT_ITEM = ['碳', '碳素']
 MAX_CREDIT = 300
 AWARD_BOX = Box((587, 141), (691, 169))
@@ -57,9 +60,18 @@ def get_shop_status() -> Status:
 
 def reco_credit() -> int:
     assert(get_shop_status() == Status.Credit_shop)
-    credit_str = recognize(intf.screen(box=CREDIT_RECO_BOX))
-    if not credit_str.isdigit():
-        raise ValueError(f'credit {credit_str} is not int')
+
+    # credit_str = recognize(intf.screen(box=CREDIT_RECO_BOX))
+    # if not credit_str.isdigit():
+    #     raise ValueError(f'credit {credit_str} is not int')
+
+    credit_str = ''
+    for box in CREDIT_RECO_BOX_2:
+        digit = recognize(intf.screen(cached=True, box=box))
+        if digit.isdigit() or len(digit) == 0:
+            credit_str += digit
+        else:
+            raise ValueError(f'{digit} is not digit')
     return int(credit_str)
 
 
