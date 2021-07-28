@@ -5,10 +5,14 @@ from PIL import Image
 from io import BytesIO
 import re
 import time
+import logging
 
 
 EXECUTABLE_PATH = 'D:/Program Files/LDPlayer4.0/adb.exe'
 COORDINATE_T = Tuple[int, int]
+
+logger = logging.getLogger('Adb')
+logger.setLevel(logging.DEBUG)
 
 
 def adb_execute(cmd: str, device: str = '', stdout=None) -> Optional[subprocess.Popen]:
@@ -50,6 +54,7 @@ class AdbInterface:
             try:
                 stdout, stderr = proc.communicate(timeout=2)
             except subprocess.TimeoutExpired:
+                logger.error(f'get device failed')
                 retry -= 1
                 continue
             else:
@@ -93,14 +98,19 @@ class AdbInterface:
                 time.time() - self.cache_timing < self.cache_ttl:
             return self.cached_screen
 
-        proc = adb_execute(f'shell screencap -p',
-                           stdout=subprocess.PIPE, device=self.device)
-        data = proc.stdout.read()
-        data = data.replace(b'\r\n', b'\n')
-        try:
-            img = Image.open(BytesIO(data))
-        except:
-            return None
+        while 1:
+            proc = adb_execute(f'shell screencap -p',
+                               stdout=subprocess.PIPE, device=self.device)
+            try:
+                stdout, stderr = proc.communicate(timeout=2)
+            except subprocess.TimeoutExpired:
+                logger.error(f'screencap failed')
+                continue
+            else:
+                break
+
+        data = stdout.replace(b'\r\n', b'\n')
+        img = Image.open(BytesIO(data))
         self.cached_screen = img
         self.cache_timing = time.time()
         return img
