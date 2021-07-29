@@ -1,13 +1,16 @@
 from .data import *
-import logging
+from ..common import get_logger
 import time
 
 
-logger = logging.getLogger('Battle')
-logger.setLevel(logging.DEBUG)
+logger = get_logger('Battle', 'DEBUG')
+TimeLasting = None
 
 
 def handle_single_battle() -> bool:
+    global TimeLasting
+    start_tm = time.time()
+
     # check current scene
     prompt = True
     while not is_battle_prev_scene():
@@ -33,6 +36,8 @@ def handle_single_battle() -> bool:
     if san < cost:
         logger.info('理智不足')
         return False
+    if TimeLasting is not None:
+        logger.info(f'预计所需时间 {san // cost * TimeLasting // 60} min')
 
     # start
     logger.debug('开始行动[关卡]')
@@ -56,11 +61,15 @@ def handle_single_battle() -> bool:
     logger.info('关卡结束')
     time.sleep(5)
 
+    ret = False
     if is_battle_end_success():
         intf.tap(BLANK_BOX)
-        return True
+        ret = True
 
-    return False
+    finish_tm = time.time()
+    TimeLasting = round(finish_tm - start_tm)
+    logger.info(f'用时{TimeLasting}s')
+    return ret
 
 
 def execute_single_level():
