@@ -1,12 +1,11 @@
 from typing import Tuple
 from .data import *
+from ..common import get_logger
 import configparser
-import logging
 import time
 import os
 
-logger = logging.getLogger('Start')
-logger.setLevel(logging.DEBUG)
+logger = get_logger('Start', 'DEBUG')
 
 
 def _load_user_account() -> Tuple[str, str]:

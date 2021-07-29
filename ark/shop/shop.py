@@ -1,11 +1,10 @@
 from adb.adb import Key
-import logging
 import time
 from typing import List
 from .data import *
+from ..common import get_logger
 
-logger = logging.getLogger('Store')
-logger.setLevel(logging.DEBUG)
+logger = get_logger('Store', 'DEBUG')
 
 
 def reco_items() -> List[ShopItem]:
