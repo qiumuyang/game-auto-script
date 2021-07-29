@@ -1,5 +1,5 @@
-from ark.main import execute_single_level
+from ark.main import simple_routine
 
 
 if __name__ == '__main__':
-    execute_single_level()
+    simple_routine()
