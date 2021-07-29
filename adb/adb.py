@@ -11,8 +11,9 @@ import logging
 EXECUTABLE_PATH = 'D:/Program Files/LDPlayer4.0/adb.exe'
 COORDINATE_T = Tuple[int, int]
 
+logging.basicConfig(format="[%(levelname)s] %(asctime)s %(name)s %(message)s")
 logger = logging.getLogger('Adb')
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 
 def adb_execute(cmd: str, device: str = '', stdout=None) -> Optional[subprocess.Popen]:
@@ -104,13 +105,17 @@ class AdbInterface:
             try:
                 stdout, stderr = proc.communicate(timeout=2)
             except subprocess.TimeoutExpired:
-                logger.error(f'screencap failed')
+                logger.error(f'screencap timeout')
                 continue
             else:
                 break
 
         data = stdout.replace(b'\r\n', b'\n')
-        img = Image.open(BytesIO(data))
+        try:
+            img = Image.open(BytesIO(data))
+            logger.debug(f'screencap failed')
+        except:
+            return None
         self.cached_screen = img
         self.cache_timing = time.time()
         return img

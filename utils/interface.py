@@ -34,7 +34,12 @@ class Interface:
         self.adb.text(text)
 
     def screen(self, cached: bool = False, box: Box = None) -> Image.Image:
-        img = self.adb.screencap(cached)
+        while 1:
+            img = self.adb.screencap(cached)
+            if img is None:
+                time.sleep(1)
+            else:
+                break
         return img.crop(box.xyxy) if box else img
 
     def img_crop(self, img: IMG_T, box: Box) -> Image.Image:
