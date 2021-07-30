@@ -24,7 +24,7 @@ SHOP_ITEM_COST_BOX = Box.from_size((10, 197), (217, 30))
 GET_CREDIT = 'shop/收取信用.png'
 GET_CREDIT_BOX = Box((971, 28), (1068, 50))
 CREDIT_RECO_BOX = Box((1155, 26), (1200, 50))
-CREDIT_RECO_BOX_2 = [Box.from_size((1157 + i * 15, 26), (15, 26))
+CREDIT_RECO_BOX_2 = [Box.from_size((1158 + i * 14, 26), (17, 26))
                      for i in range(3)]
 EXCEPT_ITEM = ['碳', '碳素']
 MAX_CREDIT = 300
@@ -69,6 +69,8 @@ def reco_credit() -> int:
     for box in CREDIT_RECO_BOX_2:
         scr = intf.screen(cached=True, box=box)
         digit = recognize(scr)
+        scr.show()
+        print(digit)
         if digit.isdigit() or len(digit) == 0:
             credit_str += digit
         else:
