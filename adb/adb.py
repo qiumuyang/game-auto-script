@@ -5,15 +5,13 @@ from PIL import Image
 from io import BytesIO
 import re
 import time
-import logging
+from utils.log import get_logger
 
 
 EXECUTABLE_PATH = 'D:/Program Files/LDPlayer4.0/adb.exe'
 COORDINATE_T = Tuple[int, int]
 
-logging.basicConfig(format="[%(levelname)s] %(asctime)s %(name)s %(message)s")
-logger = logging.getLogger('Adb')
-logger.setLevel(logging.INFO)
+logger = get_logger('Adb', 'INFO')
 
 
 def adb_execute(cmd: str, device: str = '', stdout=None) -> Optional[subprocess.Popen]:
@@ -113,8 +111,8 @@ class AdbInterface:
         data = stdout.replace(b'\r\n', b'\n')
         try:
             img = Image.open(BytesIO(data))
-            logger.debug(f'screencap failed')
         except:
+            logger.debug(f'screencap failed')
             return None
         self.cached_screen = img
         self.cache_timing = time.time()

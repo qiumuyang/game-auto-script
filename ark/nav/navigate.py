@@ -1,9 +1,9 @@
 from adb.adb import Key
 from .data import *
-from ..common import get_logger
+from utils.log import get_logger
 import time
 
-logger = get_logger('Nav', 'DEBUG')
+logger = get_logger('Nav')
 
 
 def move_to_main_scene() -> bool:

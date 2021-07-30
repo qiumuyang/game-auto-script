@@ -1,9 +1,9 @@
 from .data import *
-from ..common import get_logger
+from utils.log import get_logger
 import time
 
 
-logger = get_logger('Battle', 'DEBUG')
+logger = get_logger('Battle')
 TimeLasting = None
 
 

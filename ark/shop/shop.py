@@ -2,9 +2,9 @@ from adb.adb import Key
 import time
 from typing import List
 from .data import *
-from ..common import get_logger
+from utils.log import get_logger
 
-logger = get_logger('Store', 'DEBUG')
+logger = get_logger('Store')
 
 
 def reco_items() -> List[ShopItem]:
