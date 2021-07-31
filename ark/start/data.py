@@ -37,17 +37,19 @@ Status_pivot = {Status.Not_start: GAME_ICON,
                 Status.Wake: [WAKEN, ACCOUNT_MANAGE],
                 Status.Login: ACCOUNT_LOGIN,
                 Status.Wake_fail: 'start/请重新输入登录信息.png',
-                Status.Daily_award: '获得物资.png',
+                Status.Daily_award: '获得物资-2.png',
                 Status.Success: ['系统公告.png', '活动公告.png',
                                  'main/公告.png', 'main/好友.png',
-                                 'battle/开始行动-1.png']
+                                 'battle/开始行动-1.png',
+                                 '返回.png', '快速访问.png']
                 }
 
 
 def get_start_status() -> Status:
+    scr = intf.screen()
     for status, pivot in Status_pivot.items():
         if isinstance(pivot, str):
             pivot = [pivot]
-        if any(intf.img_match(img) for img in pivot):
+        if any(intf.img_match(img, scr) for img in pivot):
             return status
     return Status.Unknown
