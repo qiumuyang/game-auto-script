@@ -1,12 +1,9 @@
 from adb.adb import Key
 from .data import *
-from utils.log import get_logger
 import time
 
-logger = get_logger('Nav')
 
-
-def move_to_main_scene() -> bool:
+def move_to_main_scene():
     # temp
     logger.info('移动至主界面')
     while 1:
@@ -18,6 +15,8 @@ def move_to_main_scene() -> bool:
         elif scene == Scene.BattleIn:
             # wait until battle finish
             continue
+        elif scene == Scene.GetResource:
+            intf.tap(COLLECT_REWARD_BOX)
         else:
             intf.keyevent(Key.BACK)
         time.sleep(1)
