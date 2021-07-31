@@ -1,3 +1,4 @@
+from utils.log import get_logger
 from PIL import Image
 from enum import IntEnum
 from img.common import Box
@@ -7,6 +8,7 @@ from img.utils import binarization
 
 intf = ark_intf
 
+logger = get_logger('Store')
 
 OUT_OF_STOCK = 'shop/售罄.png'
 PURCHASE = 'shop/购买物品.png'
@@ -45,7 +47,7 @@ Status_pivot = {Status.Credit_shop: ['shop/pivot-1.png', 'shop/pivot-2.png'],
                 Status.Other_shop: 'shop/信用交易所.png',
                 Status.Purchase: PURCHASE,
                 Status.Not_enough: 'shop/信用不足.png',
-                Status.Get: '获得物资.png',
+                Status.Get: '获得物资-1.png',
                 }
 
 
@@ -69,12 +71,11 @@ def reco_credit() -> int:
     for box in CREDIT_RECO_BOX_2:
         scr = intf.screen(cached=True, box=box)
         digit = recognize(scr)
-        scr.show()
-        print(digit)
         if digit.isdigit() or len(digit) == 0:
             credit_str += digit
         else:
-            raise ValueError(f'{digit} is not digit')
+            credit_str += '0'
+            logger.error(f'{digit} is not digit')
     return int(credit_str)
 
 

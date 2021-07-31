@@ -2,9 +2,6 @@ from adb.adb import Key
 import time
 from typing import List
 from .data import *
-from utils.log import get_logger
-
-logger = get_logger('Store')
 
 
 def reco_items() -> List[ShopItem]:
@@ -88,3 +85,4 @@ def execute_purchase() -> None:
                 # credit -= item.cost
                 credit = reco_credit()
                 logger.info(f'当前信用 {credit}')
+    logger.info('购买执行完毕')
