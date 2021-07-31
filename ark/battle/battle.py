@@ -46,20 +46,23 @@ def handle_single_battle() -> bool:
     intf.img_tap(START_BATTLE_2)
 
     # on enter
-    intf.wait_img(IN_BATTLE)
+    intf.wait_img(PRTS_PROPER)
     if intf.img_match(SPEED_1):
         intf.img_tap(SPEED_1)
         logger.info('设置关卡二倍速')
 
     logger.info('等待关卡结束')
-    end = intf.wait_img(END_BATTLE)
-    if end == END_SPECIAL:
-        intf.tap(Box((1124, 9), (1268, 56)))
+    while 1:
+        if any(intf.img_match(pivot)
+               for pivot in END_BATTLE):
+            break
+        elif not intf.img_match(PRTS_PROPER):
+            logger.warn('代理指挥异常')
 
     # TODO: prts failure detect
     #       level up detect
     logger.info('关卡结束')
-    time.sleep(5)
+    time.sleep(2)
 
     ret = False
     if is_battle_end_success():

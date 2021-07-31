@@ -1,3 +1,4 @@
+import time
 from typing import Tuple
 from img.common import Box
 from img.reco import recognize
@@ -64,17 +65,23 @@ START_BATTLE_1 = 'battle/开始行动-1.png'
 START_BATTLE_1_BOX = Box((1121, 642), (1230, 672))
 START_BATTLE_2 = 'battle/开始行动-2.png'
 START_BATTLE_2_BOX = Box((1040, 371), (1165, 639))
-IN_BATTLE = 'battle/代理指挥作战正常运行中.png'
+PRTS_PROPER = 'battle/代理指挥作战正常运行中.png'
 SPEED_1 = 'battle/speed-1.png'
 END_SPECIAL = 'battle/剿灭结束.png'
 END_BATTLE = ['battle/全员信赖.png', 'battle/行动结束.png', END_SPECIAL]
 END_BATTLE_TEXT_BOX = Box((34, 582), (397, 672))
 BLANK_BOX = Box((938, 317), (1272, 427))
-
+BLANK_BOX_2 = Box((873, 92), (1259, 221))  # 剿灭
+STAR = 'battle/star.png'
 # P_1 = 'battle/本次行动配置不可更改.png'
 
 
 def is_battle_end_success() -> bool:
-    # TODO: check 3-star battle
-    return recognize(intf.screen(box=END_BATTLE_TEXT_BOX)) == '行动结束' \
-        or not not intf.img_match(END_BATTLE)
+    if intf.img_match(END_SPECIAL):
+        # 剿灭
+        intf.tap(BLANK_BOX_2)
+        time.sleep(1)
+        return recognize(intf.screen(box=END_BATTLE_TEXT_BOX)) == '行动结束'
+    else:
+        return recognize(intf.screen(box=END_BATTLE_TEXT_BOX)) == '行动结束' \
+            and len(intf.img_match(STAR)) == 3  # 3-star
