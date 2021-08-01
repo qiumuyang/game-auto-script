@@ -1,10 +1,13 @@
 from typing import Any, Tuple
 import cv2
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageFile
 from functools import lru_cache
 
 COORDINATE_T = Tuple[int, int]
+
+# image file is truncated
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 
 class Box:
@@ -36,6 +39,9 @@ class Box:
             incr[1] += self.h
         next_p0 = self.x0 + incr[0], self.y0 + incr[1]
         return Box.from_size(next_p0, self.size)
+
+    def __repr__(self) -> str:
+        return str(self.xyxy).strip('()')
 
     @property
     def w(self) -> int:
