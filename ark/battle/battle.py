@@ -56,8 +56,8 @@ def handle_single_battle() -> bool:
         if any(intf.img_match(pivot)
                for pivot in END_BATTLE):
             break
-        elif not intf.img_match(PRTS_PROPER):
-            logger.warn('代理指挥异常')
+        elif intf.img_match(SPEED_2) and not intf.img_match(PRTS_PROPER):
+            logger.warning('代理指挥异常')
 
     # TODO: prts failure detect
     #       level up detect

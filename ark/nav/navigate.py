@@ -31,7 +31,7 @@ def move_to_last_level() -> bool:
             intf.img_tap(TERMINAL, 1)
         elif scene == Scene.Terminal:
             if not intf.img_tap(LAST_BATTLE, 2):
-                logger.warn('[前往上一次作战] 不存在')
+                logger.critical('[前往上一次作战] 不存在')
                 return False
         elif scene == Scene.BattlePre:
             return True

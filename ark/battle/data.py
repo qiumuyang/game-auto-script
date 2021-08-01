@@ -67,6 +67,7 @@ START_BATTLE_2 = 'battle/开始行动-2.png'
 START_BATTLE_2_BOX = Box((1040, 371), (1165, 639))
 PRTS_PROPER = 'battle/代理指挥作战正常运行中.png'
 SPEED_1 = 'battle/speed-1.png'
+SPEED_2 = 'battle/speed-2.png'
 END_SPECIAL = 'battle/剿灭结束.png'
 END_BATTLE = ['battle/全员信赖.png', 'battle/行动结束.png', END_SPECIAL]
 END_BATTLE_TEXT_BOX = Box((34, 582), (397, 672))
