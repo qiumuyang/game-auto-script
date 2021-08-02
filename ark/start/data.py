@@ -11,6 +11,7 @@ WAKEN = 'start/开始唤醒.png'
 ACCOUNT_MANAGE = 'start/账号管理.png'
 ACCOUNT_LOGIN = 'start/账号登录.png'
 OK = 'ok.png'
+NO = 'no.png'
 LOGIN = 'start/登录.png'
 ACCOUNT_INPUT = 'start/账号.png'
 PASSWORD_INPUT = 'start/密码.png'
@@ -30,6 +31,7 @@ class Status(IntEnum):
     Login = 4
     Daily_award = 5
     Success = 6
+    Exit_confirm = 7
 
 
 Status_pivot = {Status.Not_start: GAME_ICON,
@@ -38,10 +40,19 @@ Status_pivot = {Status.Not_start: GAME_ICON,
                 Status.Login: ACCOUNT_LOGIN,
                 Status.Wake_fail: 'start/请重新输入登录信息.png',
                 Status.Daily_award: '获得物资-2.png',
-                Status.Success: ['系统公告.png', '活动公告.png',
-                                 'main/公告.png', 'main/好友.png',
-                                 'battle/开始行动-1.png',
-                                 '返回.png', '快速访问.png']
+                Status.Exit_confirm: '是否确认退出游戏.png',
+                Status.Success: [
+                    # notice
+                    '系统公告.png', '活动公告.png',
+                    '系统公告-2.png', '活动公告-2.png',
+                    # main scene
+                    'main/公告.png', 'main/好友.png',
+                    # in battle
+                    'battle/speed-1.png', 'battle/speed-2.png',
+                    # post battle
+                    'battle/行动结束.png', 'battle/剿灭结束.png',
+                    # common
+                    '返回.png', '快速访问.png', ]
                 }
 
 
