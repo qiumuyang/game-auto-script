@@ -3,7 +3,7 @@ from utils.log import get_logger
 import time
 
 
-logger = get_logger('Battle')
+logger = get_logger('Battle', 'INFO')
 TimeLasting = None
 
 
