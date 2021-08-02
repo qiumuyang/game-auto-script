@@ -12,6 +12,8 @@ def move_to_main_scene():
             return
         elif scene == Scene.ExitConfirm:
             intf.img_tap(NO, 1)
+        elif scene == Scene.LeaveBase:
+            intf.img_tap(OK_2, 1)
         elif scene == Scene.BattleIn:
             # wait until battle finish
             continue
@@ -49,4 +51,17 @@ def move_to_shop():
             return
         else:
             move_to_main_scene()
+        time.sleep(1)
+
+
+def move_to_base():
+    # temp
+    move_to_main_scene()
+    while 1:
+        scene = get_current_scene()
+        if scene == Scene.Main:
+            intf.img_tap(BASE, 2)
+            time.sleep(2)
+        elif scene == Scene.Base:
+            return
         time.sleep(1)

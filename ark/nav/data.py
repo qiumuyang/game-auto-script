@@ -20,7 +20,8 @@ class Scene(IntEnum):
     BattlePost = 7
     Base = 8
     ExitConfirm = 9
-    GetResource = 10
+    LeaveBase = 10
+    GetResource = 11
 
 
 PURCHASE_CENTER = 'main/采购中心.png'
@@ -34,6 +35,7 @@ TERMINAL = 'main/终端.png'
 
 NO = 'no.png'
 OK = 'ok.png'
+OK_2 = 'ok-2.png'
 LAST_BATTLE = 'terminal/前往上一次作战.png'
 COLLECT_ALL = 'request/收集全部.png'
 COLLECT_REWARD_BOX = Box((619, 619), (658, 657))
@@ -58,7 +60,11 @@ Scene_pivot = {
                      'battle/speed-1.png', 'battle/speed-2.png', ],
     Scene.BattlePost: ['battle/全员信赖.png', 'battle/行动结束.png', 'battle/剿灭结束.png', ],
     Scene.ExitConfirm: '是否确认退出游戏.png',
-    Scene.GetResource: ['获得物资-1.png', '获得物资-2.png']
+    Scene.LeaveBase: 'base/是否确认离开罗德岛基建.png',
+    Scene.GetResource: ['获得物资-1.png', '获得物资-2.png'],
+    Scene.Base: ['base/进驻总览.png', 'base/建造模式.png',
+                 'base/进驻信息.png', 'base/设施信息.png',
+                 'base/电力.png', 'base/无人机.png'],
 }
 
 
