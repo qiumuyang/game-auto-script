@@ -1,6 +1,5 @@
 from adb import AdbInterface
 from utils.interface import Interface
-from utils.log import get_logger
 
 try:
     adb = AdbInterface.get('emulator-5554')
