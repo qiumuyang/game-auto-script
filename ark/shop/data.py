@@ -8,7 +8,7 @@ from img.utils import binarization
 
 intf = ark_intf
 
-logger = get_logger('Store')
+logger = get_logger('Store', 'INFO')
 
 OUT_OF_STOCK = 'shop/售罄.png'
 PURCHASE = 'shop/购买物品.png'
