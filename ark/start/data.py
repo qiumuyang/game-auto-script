@@ -24,23 +24,23 @@ GET_AWARD_BOX = Box((619, 619), (658, 657))
 
 class Status(IntEnum):
     Unknown = -1
-    Not_start = 0
+    NotStarted = 0
     Start = 1
     Wake = 2
-    Wake_fail = 3
+    WakeFailed = 3
     Login = 4
-    Daily_award = 5
+    DailyReward = 5
     Success = 6
-    Exit_confirm = 7
+    ExitConfirm = 7
+    Update = 8
 
 
-Status_pivot = {Status.Not_start: GAME_ICON,
+Status_pivot = {Status.NotStarted: GAME_ICON,
                 Status.Start: [START, 'start/清除缓存.png'],
                 Status.Wake: [WAKEN, ACCOUNT_MANAGE],
                 Status.Login: ACCOUNT_LOGIN,
-                Status.Wake_fail: 'start/请重新输入登录信息.png',
-                Status.Daily_award: '获得物资-2.png',
-                Status.Exit_confirm: '是否确认退出游戏.png',
+                Status.WakeFailed: 'start/请重新输入登录信息.png',
+                Status.DailyReward: '获得物资-2.png',
                 Status.Success: [
                     # notice
                     '系统公告.png', '活动公告.png',
@@ -52,7 +52,9 @@ Status_pivot = {Status.Not_start: GAME_ICON,
                     # post battle
                     'battle/行动结束.png', 'battle/剿灭结束.png',
                     # common
-                    '返回.png', '快速访问.png', ]
+                    '返回.png', '快速访问.png', '返回-2.png', ],
+                Status.ExitConfirm: '是否确认退出游戏.png',
+                Status.Update: 'start/正在释放神经递质.png'
                 }
 
 

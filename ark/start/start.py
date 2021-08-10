@@ -35,27 +35,34 @@ def _login() -> None:
 
 def start_game() -> None:
     logger.info('启动中')
+    Next = {
+        Status.NotStarted: GAME_ICON,
+        Status.Start: START,
+        Status.Wake: WAKEN,
+        Status.WakeFailed: OK,
+        Status.ExitConfirm: NO,
+        Status.DailyReward: GET_AWARD_BOX,
+    }
+    prompt = True
     while 1:
         status = get_start_status()
         logger.debug(status)
         if status == Status.Unknown:
             pass
-        elif status == Status.Not_start:
-            intf.img_tap(GAME_ICON, 1)
-        elif status == Status.Start:
-            intf.img_tap(START, 1)
-        elif status == Status.Wake:
-            intf.img_tap(WAKEN, 1)
-        elif status == Status.Wake_fail:
-            intf.img_tap(OK, 1)
+        elif status in Next:
+            _next = Next[status]
+            if isinstance(_next, str):  # image
+                intf.img_tap(_next, 1)
+            elif isinstance(_next, Box):  # box
+                intf.tap(_next)
         elif status == Status.Login:
             intf.img_tap(ACCOUNT_LOGIN, 1)
             _login()
-        elif status == Status.Daily_award:
-            intf.tap(GET_AWARD_BOX)
-        elif status == Status.Exit_confirm:
-            intf.img_tap(NO, 1)
         elif status == Status.Success:
             break
+        elif status == Status.Update:
+            if prompt:
+                logger.info('更新中')
+                prompt = False
 
         time.sleep(2)
