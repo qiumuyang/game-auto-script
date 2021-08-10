@@ -75,6 +75,9 @@ class Interface:
         img2 = self.load_image(img2) if isinstance(img2, str) else img2
         return hamming_distance(dHash(img1), dHash(img2))
 
+    def img_cmp(self, img1: IMG_T, img2: IMG_T, thresh: int = 3) -> bool:
+        return self.img_diff(img1, img2) < thresh
+
     def wait_img(self, imgs: Union[List[str], str], pending: float = None) -> Optional[str]:
         if not isinstance(imgs, list):
             imgs = [imgs]
@@ -87,16 +90,3 @@ class Interface:
             if pending is not None and time.time() - start > pending:
                 break
         return None
-
-    def wait_stable_img(self, pending: float = None, thresh: int = 3) -> bool:
-        start = time.time()
-        scr_prev = self.screen()
-        while 1:
-            time.sleep(2)
-            scr_now = self.screen()
-            if self.img_diff(scr_now, img2=scr_prev) <= thresh:
-                break
-            scr_prev = scr_now
-            if pending is not None and time.time() - start > pending:
-                return False
-        return True

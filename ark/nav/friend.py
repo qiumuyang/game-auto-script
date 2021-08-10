@@ -20,9 +20,9 @@ UP_LIMIT = 'friend/上限.png'
 def _do_next_visit() -> bool:
     while 1:
         visit_img = intf.screen(box=VISIT_NEXT_BOX)
-        if intf.img_diff(visit_img, VISIT_NEXT_1) < 3:
+        if intf.img_cmp(visit_img, VISIT_NEXT_1):
             return True
-        if intf.img_diff(visit_img, VISIT_NEXT_2) < 3:
+        if intf.img_cmp(visit_img, VISIT_NEXT_2):
             return False
         time.sleep(1.5)
 
