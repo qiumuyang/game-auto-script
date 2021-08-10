@@ -22,6 +22,7 @@ class Scene(IntEnum):
     ExitConfirm = 9
     LeaveBase = 10
     GetResource = 11
+    Start = 12
 
 
 PURCHASE_CENTER = 'main/采购中心.png'
@@ -33,6 +34,9 @@ REQUEST = 'main/任务.png'
 BASE = 'main/基建.png'
 TERMINAL = 'main/终端.png'
 
+CLOSE = '关闭.png'
+BACK = '返回.png'
+BACK_2 = '返回-2.png'
 NO = 'no.png'
 OK = 'ok.png'
 OK_2 = 'ok-2.png'
@@ -65,6 +69,8 @@ Scene_pivot = {
     Scene.Base: ['base/进驻总览.png', 'base/建造模式.png',
                  'base/进驻信息.png', 'base/设施信息.png',
                  'base/电力.png', 'base/无人机.png'],
+    Scene.Start: ['start/start.png', 'start/icon.png',
+                  'start/开始唤醒.png', 'start/账号管理.png']
 }
 
 

@@ -1,4 +1,5 @@
 from adb.adb import Key
+from ..start.start import start_game
 from .data import *
 import time
 
@@ -19,8 +20,15 @@ def move_to_main_scene():
             continue
         elif scene == Scene.GetResource:
             intf.tap(COLLECT_REWARD_BOX)
+        elif scene == Scene.Start:
+            start_game()
         else:
-            intf.keyevent(Key.BACK)
+            # other cases
+            _exit = intf.wait_img([BACK, BACK_2], 0)
+            if _exit is None:
+                intf.keyevent(Key.BACK)
+            else:
+                intf.img_tap(_exit)
         time.sleep(1)
 
 
