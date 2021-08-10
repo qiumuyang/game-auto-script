@@ -1,4 +1,4 @@
-from ark.base.todo import collect_todo
+from ark.base.base import execute_base
 from .battle.battle import execute_single_level
 from .shop.shop import execute_purchase
 from .start.start import start_game
@@ -23,7 +23,7 @@ def simple_routine():
 
     # 基建
     move_to_base()
-    collect_todo()
+    execute_base()
 
     # 任务奖励
     collect_request_reward()
