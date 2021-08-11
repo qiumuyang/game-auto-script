@@ -44,6 +44,8 @@ MANUFACTURE_STATION = ['base/制造站-1.png', 'base/制造站-2.png']
 PRODUCT_DETAIL_ENTRANCE = Box.from_size((23, 554), (115, 115))
 SPEED_UP_COUNT_RECO_BOX = Box.from_size((857, 440), (51, 34))
 PRODUCT_RECO_BOX = Box.from_size((1039, 236), (168, 38))
+MANU_NUM_RECO_BOX = [Box.from_size((10, 192 + i * 82), (55, 40))
+                     for i in range(6)]
 
 
 class Status(IntEnum):
