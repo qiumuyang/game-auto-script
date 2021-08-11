@@ -40,8 +40,11 @@ class Box:
         next_p0 = self.x0 + incr[0], self.y0 + incr[1]
         return Box.from_size(next_p0, self.size)
 
+    def contains(self, box) -> bool:
+        return self.x0 <= box.x0 and self.x1 >= box.x1 and self.y0 <= box.y0 and self.y1 >= box.y1
+
     def __repr__(self) -> str:
-        return str(self.xyxy).strip('()')
+        return str(self.xywh)
 
     @property
     def w(self) -> int:
