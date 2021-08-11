@@ -20,6 +20,7 @@ def collect_todo() -> None:
             if collected:
                 return
             if not intf.img_tap(TODO, 2):
+                logger.info('没有未处理的事项')
                 return
         else:
             intf.img_tap(BACK, 1)

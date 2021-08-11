@@ -37,7 +37,7 @@ def handle_single_battle() -> bool:
         logger.info('理智不足')
         return False
     if TimeLasting is not None:
-        logger.info(f'预计所需时间 {san // cost * TimeLasting // 60} min')
+        logger.info(f'预计所需时间 {round(san // cost * TimeLasting / 60)} min')
 
     # start
     logger.debug('开始行动[关卡]')
