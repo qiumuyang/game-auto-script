@@ -48,7 +48,6 @@ def _purchase_item(i: int):
 
 
 def execute_purchase() -> None:
-    # TODO: add move-to-shop
     while 1:
         status = get_shop_status()
         if status == Status.Credit_shop:
