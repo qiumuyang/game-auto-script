@@ -4,7 +4,9 @@ import time
 
 def collect_todo() -> None:
     logger.info('基建待办事项')
+    move_to_main_base()
     assert(get_base_status() in [Status.MainBig, Status.MainSmall])
+
     collected = False
     while 1:
         status = get_base_status()
@@ -19,6 +21,6 @@ def collect_todo() -> None:
                 return
             if not intf.img_tap(TODO, 2):
                 return
-        elif status == Status.Shift:
+        else:
             intf.img_tap(BACK, 1)
         time.sleep(2)
