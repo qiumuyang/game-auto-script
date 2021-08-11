@@ -1,3 +1,4 @@
+from enum import IntEnum
 from functools import lru_cache
 from typing import List, Optional, Union
 from PIL import Image
@@ -6,13 +7,26 @@ import time
 import os
 
 from adb import AdbInterface, Key
+from adb.adb import COORDINATE_T
 from img import Box, img_match
 from img.hash import dHash, hamming_distance
 
 IMG_T = Union[str, Image.Image]
 
 
+class Direct(IntEnum):
+    Left = 1
+    Right = 2
+    Up = 4
+    Down = 8
+
+
 class Interface:
+    DirectMapping = {Direct.Left: (1, 0),
+                     Direct.Right: (-1, 0),
+                     Direct.Up: (0, 1),
+                     Direct.Down: (0, -1)}
+
     def __init__(self, adb: AdbInterface, work_dir: str = '.') -> None:
         self.adb = adb
         self.work_dir = work_dir
@@ -26,6 +40,24 @@ class Interface:
         x = box.x0 + randint(0, w)
         y = box.y0 + randint(0, h)
         self.adb.tap((x, y))
+
+    def swipe(self, swipe_to: Direct, src: COORDINATE_T, distance: int = 200, duration: int = 600) -> None:
+        if swipe_to not in self.DirectMapping:
+            raise ValueError('swipe arg is not a direction')
+        x, y = self.DirectMapping[swipe_to]
+        dst = src[0] + x * distance, src[1] + y * distance
+        self.adb.swipe(src, dst, duration)
+
+    def swipe_until_stable(self, swipe_to: Direct, src: COORDINATE_T = (640, 360), duration: int = 300, thresh: int = 3) -> None:
+        previous = self.screen()
+        while 1:
+            self.swipe(swipe_to, src, duration=duration)
+            time.sleep(1)
+            current = self.screen()
+            if self.img_cmp(previous, current, thresh=thresh):
+                break
+            else:
+                previous = current
 
     def keyevent(self, key: Key) -> None:
         self.adb.keyevent(key)
