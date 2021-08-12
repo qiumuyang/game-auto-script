@@ -39,7 +39,6 @@ OPERATOR_INVALID = 'base/invalid.png'
 OPERATOR_OVERVIEW_MOOD_BOX = Box.from_size((29, 114), (77, 4))
 MAX_MOOD = 24
 
-OPERATOR_DETAIL_BOX = Box.from_size((405, 70), (865, 570))
 MANUFACTURE_STATION = ['base/制造站-1.png', 'base/制造站-2.png']
 PRODUCT_DETAIL_ENTRANCE = Box.from_size((23, 554), (115, 115))
 SPEED_UP_COUNT_RECO_BOX = Box.from_size((857, 440), (51, 34))

@@ -7,6 +7,33 @@ from img.utils import binarization
 import re
 
 
+OPERATOR_BOX_SIZE = (130, 278)
+OPERATOR_DETAIL_BOX = Box.from_size((405, 70), (865, 570))
+BOTTOM_OFFSET = 281
+
+
+def reco_current_operators() -> List[Operator]:
+    ret = []
+    offset = (0, -180)
+    for box in intf.img_match('base/基建技能.png', thresh=0.7):
+        if box.y0 > 360:
+            # only consider the upper half
+            continue
+
+        p0 = box.x0 + offset[0], box.y0 + offset[1]
+        p1 = p0[0], p0[1] + BOTTOM_OFFSET
+        # get the bottom half
+
+        for p in [p0, p1]:
+            bbox = Box.from_size(p, OPERATOR_BOX_SIZE)
+            if not OPERATOR_DETAIL_BOX.contains(bbox):
+                # out of reco box
+                continue
+            img = intf.screen(cached=True, box=bbox)
+            ret.append(Operator(img, bbox))
+    return ret
+
+
 def reco_room_title() -> Tuple[str, str]:
     if get_base_status() == Status.Room:
         title = recognize(intf.screen(box=ROOM_TITLE_BOX))

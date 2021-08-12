@@ -52,6 +52,16 @@ ShiftOperator = {
 }
 
 
+def reco_mood(mood_img: Image.Image) -> int:
+    mood = binarization(mood_img, 200)
+    w, h = mood.size
+    for x in range(w):
+        # reach first black
+        if mood.getpixel((x, 0)) == (0, 0, 0):
+            break
+    return round(MAX_MOOD * x / w)
+
+
 class OperatorOverview:
     __Normal = 0
     __Empty = 1
@@ -68,18 +78,8 @@ class OperatorOverview:
         else:
             self.img = opr_img.copy()
             # recognize mood
-            self.mood = OperatorOverview.get_operator_mood(opr_img)
-
-    @staticmethod
-    def get_operator_mood(opr_img: Image.Image) -> int:
-        mood = intf.img_crop(opr_img, OPERATOR_OVERVIEW_MOOD_BOX)
-        mood = binarization(mood, 200)
-        w, h = mood.size
-        for x in range(w):
-            # reach first black
-            if mood.getpixel((x, 0)) == (0, 0, 0):
-                break
-        return round(MAX_MOOD * x / w)
+            self.mood = reco_mood(intf.img_crop(
+                opr_img, OPERATOR_OVERVIEW_MOOD_BOX))
 
     @property
     def valid(self) -> bool:
@@ -97,6 +97,14 @@ class Room:
         self.img = img.copy()
         self.entrance = entrance
 
+    @property
+    def capacity(self) -> int:
+        return len(self.operators)
+
+    @property
+    def attendance(self) -> List[OperatorOverview]:
+        return [op for op in self.operators if not op.empty]
+
     @staticmethod
     def from_coordinate(coordinate: COORDINATE_T):
         room_img = intf.screen(
@@ -112,7 +120,6 @@ class Room:
 
         entrance = coordinate[0] + OPERATOR_OVERVIEW_TAP_BOX[0].x0, \
             coordinate[1] + OPERATOR_OVERVIEW_TAP_BOX[0].y0
-        print(entrance)
         ret = Room(name, room_img, Box.from_size(
             entrance, OPERATOR_OVERVIEW_TAP_BOX[0].size))
         for bbox in OPERATOR_OVERVIEW_RECO_BOX:
@@ -139,7 +146,16 @@ class Room:
 
 
 class Operator:
-    def __init__(self, img: Image.Image) -> None:
-        self.mood = 24
-        self.name = ''
-        self.on_shift = False
+    NameBox = Box.from_size((36, 246), (90, 28))
+    MoodBox = Box.from_size((32, 242), (84, 2))
+
+    def __init__(self, img: Image.Image, entrance: Box) -> None:
+        self.mood = reco_mood(intf.img_crop(img, self.MoodBox))
+        self.name = recognize(binarization(
+            intf.img_crop(img, self.NameBox), 100))
+        self.on_shift = not not intf.img_match('base/工作中.png', img)
+        self.on_rest = not not intf.img_match('base/休息中.png', img)
+        self.entrance = entrance
+
+    def __repr__(self) -> str:
+        return f'({self.name} {self.mood}{" 工作中" if self.on_shift else ""}{" 休息中" if self.on_rest else ""})'
