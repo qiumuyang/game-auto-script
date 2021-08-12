@@ -51,6 +51,13 @@ ShiftOperator = {
     ],
 }
 
+ShiftMapping = {'会客室': ShiftType.Clue,
+                '贸易站': ShiftType.Trade,
+                '宿舍': ShiftType.Rest,
+                '办公室': ShiftType.Recruit
+                # '制造站' done separately
+                }
+
 
 def reco_mood(mood_img: Image.Image) -> int:
     mood = binarization(mood_img, 200)
