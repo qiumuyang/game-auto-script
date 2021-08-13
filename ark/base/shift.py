@@ -1,4 +1,5 @@
-from typing import Iterable
+from typing import Callable, Iterable
+from copy import deepcopy
 from utils.interface import Direct
 from .data import *
 from .reco import move_to_shift_top, reco_current_operators, reco_current_rooms, reco_manu_index, reco_product_name
@@ -11,10 +12,13 @@ MOOD_THRESH = 12
 
 
 def _select_operators(names: Iterable[str]) -> None:
+    # a selection is always after a recognition
+    # reco: from left to right
+    # select: from right to left
     logger.info('选择干员: ' + ', '.join(names))
     name_set = set(names)
-    intf.swipe_until_stable(Direct.Left)
-    swipe = 0
+
+    prev_scr = intf.screen()
     while name_set:
         for op in reco_current_operators():
             if op.name in name_set:
@@ -22,39 +26,68 @@ def _select_operators(names: Iterable[str]) -> None:
                 intf.tap(op.entrance)
                 time.sleep(0.5)
             if not name_set:
-                break
-        intf.swipe(Direct.Right, src=(400, 360), duration=300)
-        time.sleep(2)
-        swipe += 1
-        if swipe >= 6:
+                # done
+                return
+
+        intf.swipe(Direct.Left, src=(400, 360), duration=300)
+        time.sleep(1.6)
+
+        scr = intf.screen()
+        if intf.img_cmp(prev_scr, scr):
+            # already come to the leftmost
             logger.error('选择干员失败: ' + ', '.join(name_set))
             return
+        prev_scr = scr
 
 
-def _shift_rest(operators: List[Operator]) -> None:
-    # First, recognize operators
-    select = set()
+def _reco_filtered_operators(filt_cond: Callable[[Operator], bool],
+                             max_swipe: int = 5,
+                             capacity: int = None,
+                             brk_cond: Callable[[List[Operator]], bool] = None) -> List[str]:
+    # recognize operators that meet 'filt_cond' up to 'capacity'
+    # quit after 'max_swipe' or meeting 'brk_cond'
+    # will remain the origin position when return
+    intf.swipe_until_stable(Direct.Left)
+
+    names = set()
     swipe = 0
-    while swipe < 5 and len(select) < 5:
-        ops = reco_current_operators()
-        if all(op.mood == MAX_MOOD for op in ops):
+    while 1:
+        operators = reco_current_operators()
+        if brk_cond is not None and brk_cond(operators):
             break
-        for op in ops:
-            if op.mood != MAX_MOOD and not op.on_shift:
-                select.add(op.name)
-            if len(select) == 5:
+        for operator in operators:
+            if filt_cond(operator):
+                names.add(operator.name)
+            if capacity is not None and len(names) == capacity:
                 break
+        if capacity is not None and len(names) == capacity:
+            break
+        if swipe >= max_swipe:
+            break
         intf.swipe(Direct.Right, src=(400, 360), duration=300)
         swipe += 1
-        time.sleep(2)
+        time.sleep(1)
+    return list(names)
 
-    # Next, choose operators
-    if not select or select == set(op.name for op in operators):
+
+def _shift_rest_brk(operators: List[Operator]) -> bool:
+    return all(op.mood == MAX_MOOD for op in operators)
+
+
+def _shift_rest_filt(operator: Operator) -> bool:
+    return operator.mood != MAX_MOOD and not operator.on_shift
+
+
+def _shift_rest(current: List[Operator]) -> None:
+    names = _reco_filtered_operators(
+        _shift_rest_filt, capacity=5, brk_cond=_shift_rest_brk)
+
+    if not names or set(names) == set(op.name for op in current):
         logger.info(f'{ShiftType.Rest.value} 无需换班')
         intf.img_tap(BACK, 1)
         return
 
-    _select_operators(select)
+    _select_operators(names)
 
     # confirm shift
     while intf.img_match(CONFIRM):
@@ -73,26 +106,17 @@ def _get_current_operators(type: ShiftType) -> List[Operator]:
     return [op for op in reco_current_operators()[:cnt] if judge(op)]
 
 
-def _get_free_operators() -> List[str]:
-    intf.swipe_until_stable(Direct.Left)
-    free = set()
-    swipe = 0
-    while swipe < 3:
-        for op in reco_current_operators():
-            if op.mood == MAX_MOOD and not op.on_shift:
-                free.add(op.name)
-        intf.swipe(Direct.Right, src=(400, 360), duration=300)
-        swipe += 1
-        time.sleep(2)
-    return list(free)
+def _shift_work_filt(operator: Operator) -> bool:
+    return operator.mood == MAX_MOOD and not operator.on_shift
 
 
 def _shift(entrance: Box, type: ShiftType) -> None:
     intf.tap(entrance)
     while not intf.wait_img([CONFIRM, CLEAR_SELECT], 5):
         logger.error('等待干员工作详情页')
+
     intf.swipe_until_stable(Direct.Left)
-    intf.img_tap(CLEAR_SELECT, 1)
+    intf.img_tap(CLEAR_SELECT, 1)  # clear selection for recognition
 
     current_operators: List[Operator] = _get_current_operators(type)
     logger.info(f'换班: {type.value}, 当前: {current_operators}')
@@ -100,12 +124,13 @@ def _shift(entrance: Box, type: ShiftType) -> None:
         _shift_rest(current_operators)
         return
     else:
-        if any(op.mood < MOOD_THRESH for op in current_operators):
+        if any(op.mood < MOOD_THRESH for op in current_operators) \
+                or len(current_operators) < len(ShiftOperator[type][0]):
             # need shift
-            candidates = ShiftOperator[type].copy()
+            candidates = deepcopy(ShiftOperator[type])
             if type in [ShiftType.ProductGold, ShiftType.ProductRecord]:
                 candidates.extend(ShiftOperator[ShiftType.ProductAny])
-            free_operators: List[str] = _get_free_operators()
+            free_operators = _reco_filtered_operators(_shift_work_filt)
             for opr_list in candidates:
                 if all(op in free_operators for op in opr_list):
                     _select_operators(opr_list)
@@ -124,7 +149,7 @@ def _shift(entrance: Box, type: ShiftType) -> None:
         intf.img_tap(CONFIRM, 1)
 
 
-def do_product_shift() -> None:
+def do_manufacture_shift() -> None:
     # manufacture station
     move_to_manufacture_station()
 
