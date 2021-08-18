@@ -159,10 +159,14 @@ class Operator:
     def __init__(self, img: Image.Image, entrance: Box) -> None:
         self.mood = reco_mood(intf.img_crop(img, self.MoodBox))
         self.name = recognize(binarization(
-            intf.img_crop(img, self.NameBox), 100))
+            intf.img_crop(img, self.NameBox), 150))
         self.on_shift = not not intf.img_match('base/工作中.png', img)
         self.on_rest = not not intf.img_match('base/休息中.png', img)
         self.entrance = entrance
 
     def __repr__(self) -> str:
         return f'({self.name} {self.mood}{" 工作中" if self.on_shift else ""}{" 休息中" if self.on_rest else ""})'
+
+
+class SceneException(Exception):
+    pass

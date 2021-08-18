@@ -9,6 +9,7 @@ CONFIRM = 'base/确认.png'
 CLEAR_SELECT = 'base/清空选择.png'
 MANU_ENTRANCE_BOX = Box.from_size((288, 595), (85, 79))
 MOOD_THRESH = 12
+STOP_SWIPE_BOX = Box.from_size((1237, 149), (35, 385))
 
 
 def _select_operators(names: Iterable[str]) -> None:
@@ -112,8 +113,13 @@ def _shift_work_filt(operator: Operator) -> bool:
 
 def _shift(entrance: Box, type: ShiftType) -> None:
     intf.tap(entrance)
-    while not intf.wait_img([CONFIRM, CLEAR_SELECT], 5):
+    fail = 0
+    while not intf.wait_img([CONFIRM, CLEAR_SELECT], 3):
         logger.error('等待干员工作详情页')
+        intf.tap(entrance)
+        fail += 1
+        if fail == 3:
+            raise SceneException
 
     intf.swipe_until_stable(Direct.Left)
     intf.img_tap(CLEAR_SELECT, 1)  # clear selection for recognition
@@ -159,11 +165,22 @@ def do_manufacture_shift() -> None:
             break
         intf.tap(box)
         time.sleep(1)
+
         product = reco_product_name()
         if '作战记录' in product:
-            _shift(MANU_ENTRANCE_BOX, ShiftType.ProductRecord)
+            shift_type = ShiftType.ProductRecord
         elif product == '赤金':
-            _shift(MANU_ENTRANCE_BOX, ShiftType.ProductGold)
+            shift_type = ShiftType.ProductGold
+        else:
+            raise RuntimeError(f'unknown product {product}')
+
+        while 1:
+            try:
+                _shift(MANU_ENTRANCE_BOX, shift_type)
+            except:
+                continue
+            else:
+                break
         time.sleep(2)
 
 
@@ -200,8 +217,12 @@ def do_normal_shift() -> None:
                 logger.info(f'{shift_type.value} 无需换班')
                 continue
 
-            _shift(room.entrance, shift_type)
+            try:
+                _shift(room.entrance, shift_type)
+            except:
+                logger.error(f'选择干员失败 {room.name} {room.entrance}')
 
         time.sleep(2)
         intf.swipe(Direct.Down, (600, 200), distance=350)
-        time.sleep(2)
+        intf.tap(STOP_SWIPE_BOX)
+        time.sleep(1)
