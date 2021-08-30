@@ -1,11 +1,8 @@
 from typing import Tuple
 from .data import *
-from utils.log import get_logger
 import configparser
 import time
 import os
-
-logger = get_logger('Start', 'INFO')
 
 
 def _load_user_account() -> Tuple[str, str]:

@@ -1,9 +1,12 @@
 from enum import IntEnum
+from utils.log import get_logger
 
 from img.common import Box
 from ..common import ark_intf
 
 intf = ark_intf
+
+logger = get_logger('Start', 'INFO')
 
 GAME_ICON = 'start/icon.png'
 START = 'start/start.png'
@@ -42,11 +45,13 @@ Status_pivot = {Status.NotStarted: GAME_ICON,
                 Status.WakeFailed: 'start/请重新输入登录信息.png',
                 Status.DailyReward: '获得物资-2.png',
                 Status.Success: [
+                    # sign in
+                    'start/已签到.png',
                     # notice
                     '系统公告.png', '活动公告.png',
                     '系统公告-2.png', '活动公告-2.png',
                     # main scene
-                    'main/公告.png', 'main/好友.png',
+                    'main/好友.png',
                     # in battle
                     'battle/speed-1.png', 'battle/speed-2.png',
                     # post battle
@@ -64,5 +69,10 @@ def get_start_status() -> Status:
         if isinstance(pivot, str):
             pivot = [pivot]
         if any(intf.img_match(img, scr) for img in pivot):
+            if status == Status.Success:
+                for img in pivot:
+                    if intf.img_match(img, scr):
+                        logger.debug('Success: ' + img)
+                        break
             return status
     return Status.Unknown
