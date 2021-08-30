@@ -80,6 +80,7 @@ def _shift_rest_filt(operator: Operator) -> bool:
 
 
 def _shift_rest(current: List[Operator]) -> None:
+    # TODO: fix office-operator when 3/3 not on shift
     names = _reco_filtered_operators(
         _shift_rest_filt, capacity=5, brk_cond=_shift_rest_brk)
 
@@ -91,7 +92,7 @@ def _shift_rest(current: List[Operator]) -> None:
     _select_operators(names)
 
     # confirm shift
-    while intf.img_match(CONFIRM):
+    while intf.wait_img([CONFIRM, 'base/sort.png'], 0):
         intf.img_tap(CONFIRM, 1)
 
 
@@ -151,7 +152,7 @@ def _shift(entrance: Box, type: ShiftType) -> None:
             return
 
     # confirm shift
-    while intf.img_match(CONFIRM):
+    while intf.wait_img([CONFIRM, 'base/sort.png'], 0):
         intf.img_tap(CONFIRM, 1)
 
 

@@ -15,7 +15,7 @@ BOTTOM_OFFSET = 281
 def reco_current_operators() -> List[Operator]:
     ret = []
     offset = (0, -180)
-    for box in intf.img_match('base/基建技能.png', thresh=0.7):
+    for box in intf.img_match('base/基建技能.png'):
         if box.y0 > 360:
             # only consider the upper half
             continue
