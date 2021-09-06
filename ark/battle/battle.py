@@ -5,6 +5,7 @@ import time
 
 logger = get_logger('Battle', 'INFO')
 TimeLasting = None
+alpha = 0.125
 
 
 def handle_single_battle() -> bool:
@@ -66,12 +67,17 @@ def handle_single_battle() -> bool:
 
     ret = False
     if is_battle_end_success():
-        intf.tap(BLANK_BOX)
+        while intf.img_match('battle/行动结束.png'):
+            time.sleep(1)
+            intf.tap(BLANK_BOX)
         ret = True
 
-    finish_tm = time.time()
-    TimeLasting = round(finish_tm - start_tm)
-    logger.info(f'用时{TimeLasting}s')
+    cost_time = round(time.time() - start_tm)
+    if TimeLasting is None:
+        TimeLasting = cost_time
+    else:
+        TimeLasting = round((1-alpha) * TimeLasting + alpha * cost_time)
+    logger.info(f'用时{cost_time}s')
     return ret
 
 

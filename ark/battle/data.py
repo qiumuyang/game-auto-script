@@ -85,4 +85,4 @@ def is_battle_end_success() -> bool:
         return recognize(intf.screen(box=END_BATTLE_TEXT_BOX)) == '行动结束'
     else:
         return recognize(intf.screen(box=END_BATTLE_TEXT_BOX)) == '行动结束' \
-            and len(intf.img_match(STAR)) == 3  # 3-star
+            and len(intf.img_match(STAR, thresh=0.75)) == 3  # 3-star
