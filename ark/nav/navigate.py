@@ -13,6 +13,8 @@ def move_to_main_scene():
             return
         elif scene == Scene.ExitConfirm:
             intf.img_tap(NO, 1)
+        elif scene == Scene.BackToFriend:
+            intf.img_tap(OK_2, 1)
         elif scene == Scene.LeaveBase:
             intf.img_tap(OK_2, 1)
         elif scene == Scene.BattleIn:
@@ -46,6 +48,7 @@ def move_to_last_level() -> bool:
         elif scene == Scene.BattlePre:
             return True
         time.sleep(1)
+    return False
 
 
 def move_to_shop():

@@ -25,6 +25,7 @@ def _do_next_visit() -> bool:
         if intf.img_cmp(visit_img, VISIT_NEXT_2):
             return False
         time.sleep(1.5)
+    return False
 
 
 def _get_friend_name() -> str:

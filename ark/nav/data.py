@@ -23,6 +23,7 @@ class Scene(IntEnum):
     LeaveBase = 10
     GetResource = 11
     Start = 12
+    BackToFriend = 13
 
 
 PURCHASE_CENTER = 'main/采购中心.png'
@@ -64,6 +65,7 @@ Scene_pivot = {
                      'battle/speed-1.png', 'battle/speed-2.png', ],
     Scene.BattlePost: ['battle/全员信赖.png', 'battle/行动结束.png', 'battle/剿灭结束.png', ],
     Scene.ExitConfirm: '是否确认退出游戏.png',
+    Scene.BackToFriend: 'friend/是否确定返回好友列表.png',
     Scene.LeaveBase: 'base/是否确认离开罗德岛基建.png',
     Scene.GetResource: ['获得物资-1.png', '获得物资-2.png'],
     Scene.Base: ['base/进驻总览.png', 'base/建造模式.png',
