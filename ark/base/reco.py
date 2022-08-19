@@ -73,7 +73,7 @@ def move_to_shift_top() -> None:
 def reco_current_rooms() -> List[Room]:
     scr = intf.screen()
     rooms = []
-    for box in intf.img_match(ROOM_PIVOT, scr, thresh=0.9):
+    for box in intf.img_match(ROOM_PIVOT, scr, thresh=0.85):
         p0 = box.x0 + ROOM_X_OFFSET, box.y0 + ROOM_Y_OFFSET
         room = Room.from_coordinate(p0)
         if room:

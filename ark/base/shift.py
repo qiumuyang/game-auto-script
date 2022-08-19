@@ -25,13 +25,13 @@ def _select_operators(names: Iterable[str]) -> None:
             if op.name in name_set:
                 name_set.remove(op.name)
                 intf.tap(op.entrance)
-                time.sleep(0.5)
+                time.sleep(1)
             if not name_set:
                 # done
                 return
 
         intf.swipe(Direct.Left, src=(400, 360), duration=300)
-        time.sleep(1.6)
+        time.sleep(2)
 
         scr = intf.screen()
         if intf.img_cmp(prev_scr, scr):
@@ -135,7 +135,7 @@ def _shift(entrance: Box, type: ShiftType) -> None:
                 or len(current_operators) < len(ShiftOperator[type][0]):
             # need shift
             candidates = deepcopy(ShiftOperator[type])
-            if type in [ShiftType.ProductGold, ShiftType.ProductRecord]:
+            if type in [ShiftType.ProductGold, ShiftType.ProductRecord, ShiftType.ProductJade]:
                 candidates.extend(ShiftOperator[ShiftType.ProductAny])
             free_operators = _reco_filtered_operators(_shift_work_filt)
             for opr_list in candidates:
@@ -172,6 +172,8 @@ def do_manufacture_shift() -> None:
             shift_type = ShiftType.ProductRecord
         elif product == '赤金':
             shift_type = ShiftType.ProductGold
+        elif product == '源石碎片':
+            shift_type = ShiftType.ProductJade
         else:
             raise RuntimeError(f'unknown product {product}')
 
@@ -203,6 +205,7 @@ def do_normal_shift() -> None:
         for room in current:
             shift_type = ShiftMapping.get(room.name, None)
             if not shift_type:
+                print(room.name)
                 continue
 
             if shift_type == ShiftType.Rest \

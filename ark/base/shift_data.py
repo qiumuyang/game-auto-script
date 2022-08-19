@@ -1,8 +1,10 @@
-from img.utils import binarization
-from adb.adb import COORDINATE_T
 from enum import Enum
 from typing import List
+
 from PIL import Image
+
+from adb.adb import COORDINATE_T
+from img.utils import binarization
 from .data import *
 
 
@@ -11,6 +13,7 @@ class ShiftType(Enum):
     Clue = '会客室'
     ProductGold = '制造站(赤金)'
     ProductRecord = '制造站(作战记录)'
+    ProductJade = '制造站(合成玉)'
     ProductAny = '制造站'
     Trade = '贸易站'
     Recruit = '办公室'
@@ -35,6 +38,9 @@ ShiftOperator = {
         ['伊桑'],
         ['宴'],
     ],
+    ShiftType.ProductJade: [
+        ['炎熔', '地灵', '史都华德']
+    ],
     ShiftType.ProductGold: [
         ['砾', '夜烟', '斑点'],
         ['芬', '清流', '调香师'],
@@ -47,16 +53,17 @@ ShiftOperator = {
     ShiftType.ProductAny: [
         ['异客', '森蚺', '温蒂'],
         ['梅尔', '赫默', '白面鸮'],
-        ['史都华德', '杰西卡', '香草'],
+        ['水月', '杰西卡', '香草'],
     ],
 }
 
-ShiftMapping = {'会客室': ShiftType.Clue,
-                '贸易站': ShiftType.Trade,
-                '宿舍': ShiftType.Rest,
-                '办公室': ShiftType.Recruit
-                # '制造站' done separately
-                }
+ShiftMapping = {
+    '会客室': ShiftType.Clue,
+    '贸易站': ShiftType.Trade,
+    '宿舍': ShiftType.Rest,
+    '办公室': ShiftType.Recruit
+    # '制造站' done separately
+}
 
 
 def reco_mood(mood_img: Image.Image) -> int:
@@ -126,7 +133,7 @@ class Room:
             return None
 
         entrance = coordinate[0] + OPERATOR_OVERVIEW_TAP_BOX[0].x0, \
-            coordinate[1] + OPERATOR_OVERVIEW_TAP_BOX[0].y0
+                   coordinate[1] + OPERATOR_OVERVIEW_TAP_BOX[0].y0
         ret = Room(name, room_img, Box.from_size(
             entrance, OPERATOR_OVERVIEW_TAP_BOX[0].size))
         for bbox in OPERATOR_OVERVIEW_RECO_BOX:
@@ -142,14 +149,14 @@ class Room:
     @property
     def verbose(self) -> str:
         mood_str = ' '.join([str(op.mood)
-                            for op in self.operators if not op.empty])
+                             for op in self.operators if not op.empty])
         room_str = f'{self.name}: {sum(not x.empty for x in self.operators)}/{len(self.operators)}'
         return room_str if not mood_str else room_str + ': ' + mood_str
 
     def __eq__(self, o: object) -> bool:
-        assert(isinstance(o, Room))
+        assert (isinstance(o, Room))
         return self.name == o.name and len(self.operators) == len(o.operators) \
-            and all(self.operators[i].mood == o.operators[i].mood for i, op in enumerate(self.operators))
+               and all(self.operators[i].mood == o.operators[i].mood for i, op in enumerate(self.operators))
 
 
 class Operator:
@@ -160,6 +167,8 @@ class Operator:
         self.mood = reco_mood(intf.img_crop(img, self.MoodBox))
         self.name = recognize(binarization(
             intf.img_crop(img, self.NameBox), 150))
+        if self.name.startswith('白面'):  # bad recognition
+            self.name = '白面鸮'
         self.on_shift = not not intf.img_match('base/工作中.png', img)
         self.on_rest = not not intf.img_match('base/休息中.png', img)
         self.entrance = entrance
