@@ -9,8 +9,11 @@ def move_to_main_scene():
     logger.info('移动至主界面')
     while 1:
         scene = get_current_scene()
+        logger.debug(scene.name)
         if scene == Scene.Main:
             return
+        elif scene == Scene.Notice:
+            intf.img_tap(CLOSE, 1)
         elif scene == Scene.ExitConfirm:
             intf.img_tap(NO, 1)
         elif scene == Scene.BackToFriend:
@@ -39,6 +42,7 @@ def move_to_last_level() -> bool:
     move_to_main_scene()
     while 1:
         scene = get_current_scene()
+        logger.debug(scene.name)
         if scene == Scene.Main:
             intf.img_tap(TERMINAL, 1)
         elif scene == Scene.Terminal:

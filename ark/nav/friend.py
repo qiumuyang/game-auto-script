@@ -7,7 +7,7 @@ VISIT_NEXT_1 = 'friend/访问下位-有.png'
 VISIT_NEXT_2 = 'friend/访问下位-无.png'
 VISIT_NEXT_BOX = Box.from_size((1091, 578), (189, 101))
 
-FRIEND_PIVOT = 'friend/我的信息.png'
+FRIEND_PIVOT = ['friend/我的信息.png', 'friend/我的信息-2.png']
 FRIEND_LIST = 'friend/好友列表.png'
 VISIT_BASE = 'friend/访问基建.png'
 FRIEND_NAME_RECO_BOX = Box.from_size((421, 17), (216, 40))
@@ -35,7 +35,7 @@ def _get_friend_name() -> str:
 
 def collect_friend_credit():
     move_to_main_scene()
-    while not intf.img_match(FRIEND_PIVOT):
+    while not intf.wait_img(FRIEND_PIVOT, 0):
         intf.img_tap(FRIEND, 0)
     while not intf.img_match(VISIT_BASE):
         intf.img_tap(FRIEND_LIST, 0)

@@ -24,6 +24,7 @@ class Scene(IntEnum):
     GetResource = 11
     Start = 12
     BackToFriend = 13
+    Notice = 14
 
 
 PURCHASE_CENTER = 'main/采购中心.png'
@@ -46,8 +47,11 @@ COLLECT_ALL = 'request/收集全部.png'
 COLLECT_REWARD_BOX = Box((619, 619), (658, 657))
 
 Scene_pivot = {
+    Scene.Notice: ['系统公告.png', '活动公告.png',
+                   '系统公告-2.png', '活动公告-2.png', ],
     Scene.Main: [PURCHASE_CENTER, RECRUIT, GACHA, BASE,
-                 NOTICE, TERMINAL, FRIEND],
+                #  NOTICE, 
+                 TERMINAL, FRIEND],
     Scene.Shop: ['shop/信用交易所.png', 'shop/源石交易所.png',
                  'shop/时装商店.png', 'shop/家具商店.png', ],
     Scene.Terminal: ['terminal/main-theme-pivot.png', 'terminal/前往上一次作战.png',
