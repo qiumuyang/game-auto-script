@@ -1,9 +1,6 @@
+from adb.adb import Key
 from .data import *
-from utils.log import get_logger
-import time
 
-
-logger = get_logger('Battle', 'INFO')
 TimeLasting = None
 alpha = 0.125
 
@@ -15,21 +12,26 @@ def handle_single_battle() -> bool:
     # check current scene
     prompt = True
     while not is_battle_prev_scene():
+        if intf.img_match('battle/map_pivot.png') or \
+                intf.img_match('battle/enemy_pivot.png') or \
+                intf.img_match('battle/全员信赖.png'):
+            intf.keyevent(Key.BACK)
+            time.sleep(2)
         if prompt:
             logger.info('等待关卡界面')
             prompt = False
         time.sleep(1)
 
     # check prts
-    prts = get_prts_status()
+    img, prts = get_prts_status()
     if prts == PRTS.Locked:
         logger.error('代理指挥未解锁')
         return False
     while prts == PRTS.Disabled:
         logger.info('启用代理指挥')
-        intf.img_tap(PRTS_img[PRTS.Disabled.value])
+        intf.img_tap(img[PRTS.Disabled.value])
         time.sleep(1)
-        prts = get_prts_status()
+        img, prts = get_prts_status()
 
     san, m_san, cost = get_sanity()
     logger.info(f'理智: {san}/{m_san}')
@@ -42,7 +44,12 @@ def handle_single_battle() -> bool:
 
     # start
     logger.debug('开始行动[关卡]')
-    intf.img_tap(START_BATTLE_1)
+    while 1:
+        match = intf.wait_img([START_BATTLE_1_1, START_BATTLE_1], 3)
+        if match:
+            intf.img_tap(match)
+            break
+    # intf.img_tap(START_BATTLE_1)
     logger.debug('开始行动[队伍]')
     intf.img_tap(START_BATTLE_2)
 
@@ -56,27 +63,30 @@ def handle_single_battle() -> bool:
     while 1:
         if any(intf.img_match(pivot)
                for pivot in END_BATTLE):
+            logger.debug([intf.img_match(pivot)
+                          for pivot in END_BATTLE])
             break
-        elif intf.img_match(SPEED_2) and not intf.img_match(PRTS_PROPER):
-            logger.warning('代理指挥异常')
+        elif intf.img_match(SPEED_2) and intf.img_match(PRTS_FAIL):
+            logger.error('代理指挥失败')
+            return False
 
-    # TODO: prts failure detect
-    #       level up detect
+    # TODO: level up detect
     logger.info('关卡结束')
     time.sleep(2)
 
     ret = False
     if is_battle_end_success():
-        while intf.img_match('battle/行动结束.png'):
+        while any(intf.img_match(pivot)
+                  for pivot in END_BATTLE):
             time.sleep(1)
             intf.tap(BLANK_BOX)
-        ret = True
+    ret = True
 
     cost_time = round(time.time() - start_tm)
     if TimeLasting is None:
         TimeLasting = cost_time
     else:
-        TimeLasting = round((1-alpha) * TimeLasting + alpha * cost_time)
+        TimeLasting = round((1 - alpha) * TimeLasting + alpha * cost_time)
     logger.info(f'用时{cost_time}s')
     return ret
 
