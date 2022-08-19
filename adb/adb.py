@@ -1,14 +1,15 @@
-from enum import IntEnum
-import subprocess
-from typing import List, Optional, Tuple
-from PIL import Image
-from io import BytesIO
 import re
+import subprocess
 import time
+from enum import IntEnum
+from io import BytesIO
+from typing import List, Optional, Tuple
+
+from PIL import Image
+
 from utils.log import get_logger
 
-
-EXECUTABLE_PATH = 'D:/Program Files/LDPlayer4.0/adb.exe'
+EXECUTABLE_PATH = r'D:\LeiDian\LDPlayer64\adb.exe'
 COORDINATE_T = Tuple[int, int]
 
 logger = get_logger('Adb', 'INFO')
@@ -21,7 +22,7 @@ def adb_execute(cmd: str, device: str = '', stdout=None) -> Optional[subprocess.
         header = EXECUTABLE_PATH + f' -s {device}'
     proc = subprocess.Popen(f'{header} {cmd}', stdout=stdout)
     if stdout == None:  # need not check output
-        proc.wait()     # wait for process to finish
+        proc.wait()  # wait for process to finish
         # or else will cause trouble
         return None
     return proc
@@ -58,6 +59,10 @@ class AdbInterface:
                 continue
             else:
                 break
+        else:
+            adb_execute('kill-server')
+            adb_execute('start-server')
+            return AdbInterface.get_devices()
 
         data = str(stdout, encoding='ascii')
         for line in data.splitlines():
